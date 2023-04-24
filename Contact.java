@@ -7,14 +7,14 @@ public class Contact {
     private SimpleStringProperty lName;
     private SimpleStringProperty cmpny;
     private SimpleStringProperty eAddress;
-    private SimpleIntegerProperty pNumber;
+    private SimpleStringProperty pNumber;
 
-    public Contact(String firstName, String lastName, String company, String emailAddress, int phoneNumber) {
+    public Contact(String firstName, String lastName, String company, String emailAddress, String phoneNumber) {
         this.fName = new SimpleStringProperty(firstName);
         this.lName = new SimpleStringProperty(lastName);
         this.cmpny = new SimpleStringProperty(company);
         this.eAddress = new SimpleStringProperty(emailAddress);
-        this.pNumber = new SimpleIntegerProperty(phoneNumber);
+        this.pNumber = new SimpleStringProperty(phoneNumber);
 
     }
 
@@ -39,7 +39,7 @@ public class Contact {
         return eAddress;
     }
 
-    public SimpleIntegerProperty pNumberProperty() {
+    public SimpleStringProperty pNumberProperty() {
         return pNumber;
     }
 
