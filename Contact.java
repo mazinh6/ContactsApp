@@ -1,4 +1,3 @@
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class Contact {
@@ -8,6 +7,16 @@ public class Contact {
     private SimpleStringProperty cmpny;
     private SimpleStringProperty eAddress;
     private SimpleStringProperty pNumber;
+    private String phoneNumberString;
+    private String eAddressString;
+
+    // must extend a cell factory to provide for input validation for all columns
+    // when editing (commitEdit)
+    // must extend a cell factory to provide custom rendering for one column
+    // (updateItem)
+    // one column needs to be a dynamic size property that can have any number of
+    // values (i.e. many phone numbers but can be any column) [using a custom cell
+    // factory here makes the most sense and can be paired with prev 2 requirements]
 
     public Contact(String firstName, String lastName, String company, String emailAddress, String phoneNumber) {
         this.fName = new SimpleStringProperty(firstName);
@@ -15,6 +24,9 @@ public class Contact {
         this.cmpny = new SimpleStringProperty(company);
         this.eAddress = new SimpleStringProperty(emailAddress);
         this.pNumber = new SimpleStringProperty(phoneNumber);
+
+        this.phoneNumberString = phoneNumber;
+        this.eAddressString = phoneNumber;
 
     }
 
@@ -41,6 +53,14 @@ public class Contact {
 
     public SimpleStringProperty pNumberProperty() {
         return pNumber;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumberString;
+    }
+
+    public String getEmailAddress() {
+        return phoneNumberString;
     }
 
     // public String getCompany() {

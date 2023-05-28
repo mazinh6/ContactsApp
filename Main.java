@@ -1,26 +1,20 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import javafx.scene.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.MapValueFactory;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 
@@ -74,12 +68,12 @@ public class Main extends Application {
         // Creating the "First Name" column
         TableColumn<Contact, String> firstNameColumn = new TableColumn<Contact, String>("First Name");
         firstNameColumn.setCellValueFactory(new PropertyValueFactory<Contact, String>("fName"));
-        firstNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        firstNameColumn.setCellFactory(listOfCells -> new NameTableCell());
 
         // Creating the "Last Name" column
         TableColumn<Contact, String> lastNameColumn = new TableColumn<Contact, String>("Last Name");
         lastNameColumn.setCellValueFactory(new PropertyValueFactory<Contact, String>("lName"));
-        lastNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        lastNameColumn.setCellFactory(listOfCells -> new NameTableCell());
 
         // Creating the "Company" column
         TableColumn<Contact, String> companyColumn = new TableColumn<Contact, String>("Company");
@@ -89,12 +83,12 @@ public class Main extends Application {
         // Creating the "Email Address" column
         TableColumn<Contact, String> emailAddressColumn = new TableColumn<Contact, String>("Email Address");
         emailAddressColumn.setCellValueFactory(new PropertyValueFactory<Contact, String>("eAddress"));
-        emailAddressColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        emailAddressColumn.setCellFactory(listOfCells -> new EmailTableCell());
 
         // Creating the "Phone Number" column
         TableColumn<Contact, String> phoneNumberColumn = new TableColumn<Contact, String>("Phone Number");
         phoneNumberColumn.setCellValueFactory(new PropertyValueFactory<Contact, String>("pNumber"));
-        phoneNumberColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        phoneNumberColumn.setCellFactory(listOfCells -> new PhoneTableCell());
 
         // Adding all of the columns to the TableView Object created earlier called
         // "contactTable"
@@ -222,14 +216,23 @@ public class Main extends Application {
 
         });
 
+        // Event Handler for when the application is closed
         window.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent e) {
 
+                // Path for the file
                 String path = "contactlist.csv";
+
+                // Try-catch to catch IOException
                 try {
+                    // Creating a new instance of BufferedWriter, false in the filewriter to ensure
+                    // the whole contact list is overwritten
                     BufferedWriter writer = new BufferedWriter(new FileWriter(path, false));
 
+                    // Enhanced for loop that repeats over the rows in the table
                     for (Object r : contactTable.getItems()) {
+
+                        //
                         String firstName = ((Contact) r).fNameProperty().get();
                         String lastName = ((Contact) r).lNameProperty().get();
                         String company = ((Contact) r).cmpnyProperty().get();
@@ -292,8 +295,24 @@ public class Main extends Application {
     // called person. Its function is to add person to the contactTable
     private void addContact(Contact Person) {
 
-        // Add person to contactTable
-        contactTable.getItems().add(Person);
+        // Regex from https://www.javatpoint.com/java-email-validation
+        String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(Person.getEmailAddress());
+
+        // Validation for when a contact is added, the phone number should be a valid
+        // phone number, and same with the email address
+        Alert alert = new Alert(AlertType.INFORMATION);
+        String contentText = "Invalid Field Entered";
+        if (Person.getPhoneNumber().length() != 9) {
+            alert.setContentText(contentText);
+            alert.show();
+        } else if (!matcher.matches()) {
+            alert.show();
+        } else {
+            // Add person to contactTable
+            contactTable.getItems().add(Person);
+        }
     }
 
     // A private void method called ClearFields that doesn't have any parameters.
