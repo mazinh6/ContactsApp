@@ -60,7 +60,7 @@ public class Contact {
     }
 
     public String getEmailAddress() {
-        return phoneNumberString;
+        return eAddressString;
     }
 
     // public String getCompany() {
