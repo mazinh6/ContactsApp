@@ -15,7 +15,7 @@ public class PhoneTableCell extends TextFieldTableCell<Contact, String> {
 
         // formats the number to appear as a formatted phone number on screen, does not
         // physically change the number in the file
-        if (!empty) {
+        if (!empty && !value.equals("-1")) {
             formattedN = value.substring(0, 3) + "-";
             formattedN += value.substring(3, 6) + "-";
             formattedN += value.substring(6, 10);

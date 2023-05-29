@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -26,9 +27,11 @@ public class Main extends Application {
     // Contact Person = new Contact("ABC", "DEF", "HIJ", "mh@example.com",
     // "987654321");
 
-    static Contact Contacts;
+    static Contact contacts;
 
     static String[] values;
+
+    static int numberOfNestedColumns = 0;
 
     // Create a private TableView object called contactTable
     private TableView contactTable = new TableView();
@@ -47,6 +50,8 @@ public class Main extends Application {
 
     // Create a private TextField object called number
     private TextField number = new TextField();
+
+    private TextField newNumber = new TextField();
 
     public static void main(String[] banana) {
         launch(banana);
@@ -164,6 +169,10 @@ public class Main extends Application {
         // set the maximum width of number to 100
         number.setMaxWidth(100);
 
+        menuPane.getChildren().add(newNumber);
+        newNumber.relocate(550, 550);
+        newNumber.setMaxWidth(100);
+
         // create a Button called addButton for adding contacts
         Button addButton = new Button("Add");
 
@@ -183,6 +192,11 @@ public class Main extends Application {
             // the properties of the Contact
             Contact person = new Contact(firstName.getText(), lastName.getText(), companyName.getText(),
                     email.getText(), number.getText());
+
+            // TESTING: seems to work right now?????? no way
+            for (int i = 0; i < numberOfNestedColumns; i++) {
+                person.addPNumber(new SimpleStringProperty("-1"));
+            }
 
             // Call the addContact method that adds the contact to the table
             addContact(person);
@@ -219,6 +233,33 @@ public class Main extends Application {
 
         });
 
+        Button addPhoneNumber = new Button("Add Phone Number");
+        menuPane.getChildren().add(addPhoneNumber);
+        addPhoneNumber.relocate(620, 550);
+        addPhoneNumber.setMinWidth(90);
+
+        addPhoneNumber.setOnAction(event -> {
+
+            numberOfNestedColumns++;
+
+            TableColumn<Contact, String> nestedColumn = new TableColumn<>("Phone Number");
+            phoneNumberColumn.getColumns().add(nestedColumn);
+
+            for (int i = 0; i < contactTable.getItems().size(); i++) {
+                Contact c = (Contact) contactTable.getItems().get(i);
+
+                c.addPNumber(new SimpleStringProperty("-1"));
+
+            }
+
+            nestedColumn.setCellValueFactory(cellData -> {
+                return cellData.getValue().getPNumberAt(numberOfNestedColumns - 1);
+            });
+            nestedColumn.setCellFactory(list -> new PhoneTableCell());
+            nestedColumn.setEditable(true);
+
+        });
+
         // Event Handler for when the application is closed
         window.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent e) {
@@ -244,14 +285,20 @@ public class Main extends Application {
 
                         System.out.println(firstName + "," + lastName + "," + company + "," + eAddress + "," + pNumber);
                         writer.write(
-                                firstName + "," + lastName + "," + company + "," + eAddress + "," + pNumber);
+                                firstName + "," + lastName + "," + company + "," + eAddress + ",");
+                        for (int i = 0; i < ((Contact) r).getPNumberList().size(); i++) {
+                            if (i != ((Contact) r).getPNumberList().size() - 1) {
+                                writer.write(((Contact) r).getPNumberAt(i).get() + ",");
+                            } else {
+                                writer.write(((Contact) r).getPNumberAt(i).get());
+                            }
+                        }
                         writer.newLine();
                     }
                     writer.close();
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
-
             }
         });
 
@@ -264,6 +311,7 @@ public class Main extends Application {
             // Creating the BufferedReader object that we will use to read from the .csv
             // file
             BufferedReader br = new BufferedReader(new FileReader(path));
+            boolean firstTime = true;
 
             // Reading each line of the file with a while loop (will repeat as long as the
             // lines in the file are not null)
@@ -272,10 +320,22 @@ public class Main extends Application {
                 values = line.split(",");
 
                 // Defining the contact object for one line in the csv file
-                Contacts = new Contact(values[0], values[1], values[2], values[3], values[4]);
+                contacts = new Contact(values[0], values[1], values[2], values[3], values[4]);
+
+                for (int i = 5; i < values.length; i++) {
+                    contacts.addPNumber(new SimpleStringProperty(values[i]));
+                }
 
                 // Adding the contact to be displayed in the GUI
-                contactTable.getItems().add(Contacts);
+                contactTable.getItems().add(contacts);
+
+                if (values.length > 5 && firstTime) {
+
+                    for (int i = 0; i < contacts.getPNumberList().size(); i++) {
+                        preCreatePNumberCols(i);
+                    }
+                    firstTime = false;
+                }
             }
 
         } catch (FileNotFoundException e) {
@@ -292,6 +352,18 @@ public class Main extends Application {
 
         // Displaying the application window
         window.show();
+    }
+
+    private void preCreatePNumberCols(int i) {
+        System.out.println("Print" + (i + 1));
+        TableColumn<Contact, String> nestedColumn = new TableColumn<>("Phone Number");
+        ((TableColumn<Contact, String>) contactTable.getColumns().get(4)).getColumns().add(nestedColumn);
+        nestedColumn.setCellValueFactory(cellData -> {
+            return cellData.getValue().getPNumberAt(i);
+        });
+        nestedColumn.setCellFactory(list -> new PhoneTableCell());
+        nestedColumn.setEditable(true);
+        numberOfNestedColumns++;
     }
 
     // A private void method called addContact with the parameter of type Contact

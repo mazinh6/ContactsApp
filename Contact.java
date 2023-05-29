@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 import javafx.beans.property.SimpleStringProperty;
 
 public class Contact {
@@ -7,6 +9,7 @@ public class Contact {
     private SimpleStringProperty cmpny;
     private SimpleStringProperty eAddress;
     private SimpleStringProperty pNumber;
+    private ArrayList<SimpleStringProperty> pNumberList;
     private String phoneNumberString;
     private String eAddressString;
 
@@ -25,6 +28,9 @@ public class Contact {
         this.eAddress = new SimpleStringProperty(emailAddress);
         this.pNumber = new SimpleStringProperty(phoneNumber);
 
+        this.pNumberList = new ArrayList<SimpleStringProperty>();
+        pNumberList.add(pNumber);
+
         this.phoneNumberString = phoneNumber;
         this.eAddressString = emailAddress;
 
@@ -33,6 +39,18 @@ public class Contact {
     public Contact(String firstName, String lastName) {
         this.fName = new SimpleStringProperty(firstName);
         this.lName = new SimpleStringProperty(lastName);
+    }
+
+    public void addPNumber(SimpleStringProperty newNumber) {
+        pNumberList.add(newNumber);
+    }
+
+    public ArrayList<SimpleStringProperty> getPNumberList() {
+        return pNumberList;
+    }
+
+    public SimpleStringProperty getPNumberAt(int index) {
+        return pNumberList.get(index);
     }
 
     public SimpleStringProperty fNameProperty() {

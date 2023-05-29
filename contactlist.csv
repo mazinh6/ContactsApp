@@ -1,4 +1,6 @@
-Papa, Papa, Papa, Papa@example.com,1234567890
-Mama, Mama, Mama, Mama@example.com,1234567890
-John, Example, XamPLE, johne@example.com,9876543210
-jimmy,Donald,Feastables,Jimd@gmail.com,6478823128
+Papa,Papa,Papa,Papa@example.com,1234567890,-1,-1,-1
+Mama,Mama,Mama,mama@example.com,1234567890,-1,-1,-1
+John,Example,XamPLE,johne@example.com,1234567890,3216540000,-1,-1
+jimmy,Donald,Feastables,Jimd@gmail.com,1234567890,-1,-1,-1
+maz,maz,maz,maz@gmail.com,9999999999,9999999999,-1,-1
+Test,Test,Test,ii@gmail.com,7777777777,8888888888,8888888888,-1,-1
