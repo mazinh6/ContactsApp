@@ -209,10 +209,13 @@ public class Main extends Application {
 
             // Create an int variable called row to store the index value of the Contact
             // being deleted
-            int row = contactTable.getSelectionModel().getSelectedIndex();
+            // int row = contactTable.getSelectionModel().getSelectedIndex();
+
+            Contact deleteRow = (Contact) contactTable.getSelectionModel().getSelectedItem();
 
             // Remove the Contact with the index row
-            contactTable.getItems().remove(row);
+            if (deleteRow != null)
+                contactTable.getItems().remove(deleteRow);
 
         });
 
@@ -304,8 +307,8 @@ public class Main extends Application {
         // phone number, and same with the email address
         Alert alert = new Alert(AlertType.INFORMATION);
         String contentText = "Invalid Field Entered";
-        if (Person.getPhoneNumber().length() != 9) {
-            alert.setContentText(contentText);
+        alert.setContentText(contentText);
+        if (Person.getPhoneNumber().length() != 10) {
             alert.show();
         } else if (!matcher.matches()) {
             alert.show();
@@ -313,6 +316,7 @@ public class Main extends Application {
             // Add person to contactTable
             contactTable.getItems().add(Person);
         }
+
     }
 
     // A private void method called ClearFields that doesn't have any parameters.

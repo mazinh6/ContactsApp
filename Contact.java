@@ -26,7 +26,7 @@ public class Contact {
         this.pNumber = new SimpleStringProperty(phoneNumber);
 
         this.phoneNumberString = phoneNumber;
-        this.eAddressString = phoneNumber;
+        this.eAddressString = emailAddress;
 
     }
 
