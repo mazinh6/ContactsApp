@@ -7,6 +7,8 @@ public class NameTableCell extends TextFieldTableCell<Contact, String> {
         super(new DefaultStringConverter());
     }
 
+    private String formatted;
+
     @Override
     public void updateItem(String value, boolean empty) {
         super.updateItem(value, empty);
@@ -18,10 +20,16 @@ public class NameTableCell extends TextFieldTableCell<Contact, String> {
         if (!empty) {
             char ch1 = Character.toUpperCase(value.charAt(0));
 
-            String formatted = ch1 + value.substring(1);
+            formatted = ch1 + value.substring(1);
             value = formatted;
             setText(value);
         }
+    }
+
+    public void cancelEdit() {
+        super.cancelEdit();
+
+        setText(formatted);
     }
 
     @Override

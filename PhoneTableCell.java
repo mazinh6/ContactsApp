@@ -7,6 +7,8 @@ public class PhoneTableCell extends TextFieldTableCell<Contact, String> {
         super(new DefaultStringConverter());
     }
 
+    private String formattedN;
+
     public void updateItem(String value, boolean empty) {
         super.updateItem(value, empty);
         setText(null);
@@ -14,7 +16,7 @@ public class PhoneTableCell extends TextFieldTableCell<Contact, String> {
         // formats the number to appear as a formatted phone number on screen, does not
         // physically change the number in the file
         if (!empty) {
-            String formattedN = value.substring(0, 3) + "-";
+            formattedN = value.substring(0, 3) + "-";
             formattedN += value.substring(3, 6) + "-";
             formattedN += value.substring(6, 10);
 
@@ -22,6 +24,12 @@ public class PhoneTableCell extends TextFieldTableCell<Contact, String> {
             setText(value);
         }
 
+    }
+
+    public void cancelEdit() {
+        super.cancelEdit();
+
+        setText(formattedN);
     }
 
     // Validation
