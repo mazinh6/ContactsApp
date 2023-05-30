@@ -205,8 +205,9 @@ public class Main extends Application {
             }
 
             // Setting the cell value factory to -1
+            int columnIndex = numberOfNestedColumns - 1;
             nestedColumn.setCellValueFactory(cellData -> {
-                return cellData.getValue().getPNumberAt(numberOfNestedColumns - 1);
+                return cellData.getValue().getPNumberAt(columnIndex);
             });
             // cell factory is a phoneTableCell();
             nestedColumn.setCellFactory(list -> new PhoneTableCell());
@@ -365,13 +366,14 @@ public class Main extends Application {
             alert.show();
         } else if (!matcher.matches()) {
             alert.show();
-        } else if (!(person.fNameProperty().getValue().length() == 0 || person.fNameProperty().getValue() == null
-                || person.lNameProperty().getValue().length() == 0 || person.lNameProperty().getValue() == null)) {
-            if (person.fNameProperty().getValue().charAt(0) == ' ') {
-                alert.show();
-            } else if (person.lNameProperty().getValue().charAt(0) == ' ') {
-                alert.show();
-            }
+        } else if (person.fNameProperty().getValue().length() == 0 || person.fNameProperty().getValue() == null) {
+            alert.show();
+        } else if (person.lNameProperty().getValue().length() == 0 || person.lNameProperty().getValue() == null) {
+            alert.show();
+        } else if (person.fNameProperty().getValue().charAt(0) == ' ') {
+            alert.show();
+        } else if (person.lNameProperty().getValue().charAt(0) == ' ') {
+            alert.show();
         } else {
             boolean valid = true;
             // Add person to contactTable
