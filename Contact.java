@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class Contact {
 
+    // Declaring the instance variables
     private SimpleStringProperty fName;
     private SimpleStringProperty lName;
     private SimpleStringProperty cmpny;
@@ -13,33 +14,26 @@ public class Contact {
     private String phoneNumberString;
     private String eAddressString;
 
-    // must extend a cell factory to provide for input validation for all columns
-    // when editing (commitEdit)
-    // must extend a cell factory to provide custom rendering for one column
-    // (updateItem)
-    // one column needs to be a dynamic size property that can have any number of
-    // values (i.e. many phone numbers but can be any column) [using a custom cell
-    // factory here makes the most sense and can be paired with prev 2 requirements]
-
+    // Constructor for creating a contact
     public Contact(String firstName, String lastName, String company, String emailAddress, String phoneNumber) {
+        // Initializing main properties
         this.fName = new SimpleStringProperty(firstName);
         this.lName = new SimpleStringProperty(lastName);
         this.cmpny = new SimpleStringProperty(company);
         this.eAddress = new SimpleStringProperty(emailAddress);
         this.pNumber = new SimpleStringProperty(phoneNumber);
 
+        // Initializing the phone number list and adding the first phone number
         this.pNumberList = new ArrayList<SimpleStringProperty>();
         pNumberList.add(pNumber);
 
+        // Strings for accessing these properties
         this.phoneNumberString = phoneNumber;
         this.eAddressString = emailAddress;
 
     }
 
-    public Contact(String firstName, String lastName) {
-        this.fName = new SimpleStringProperty(firstName);
-        this.lName = new SimpleStringProperty(lastName);
-    }
+    // Getter and setter methods:
 
     public void addPNumber(SimpleStringProperty newNumber) {
         pNumberList.add(newNumber);
@@ -80,18 +74,4 @@ public class Contact {
     public String getEmailAddress() {
         return eAddressString;
     }
-
-    // public String getCompany() {
-    // return cmpny;
-    // }
-
-    // public String getEmailAddress() {
-    // return eAddress;
-    // }
-
-    // public int getPhoneNumber() {
-    // return pNumber;
-    // }
-
-    // Each contact must have between 5-7 properties
 }

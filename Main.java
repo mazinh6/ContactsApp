@@ -1,3 +1,7 @@
+/* Contacts App */
+/* Code can be found at: https://github.com/mazinh6/ContactsApp */
+/* The csv file should be cleared, or have valid content in it before running the program for the first time */
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -21,37 +25,27 @@ import javafx.scene.control.cell.TextFieldTableCell;
 
 public class Main extends Application {
 
-    // Contact Mazin = new Contact("Mazin", "Habib", "MHOP", "mh@example.com",
-    // "123456789");
-
-    // Contact Person = new Contact("ABC", "DEF", "HIJ", "mh@example.com",
-    // "987654321");
-
+    // Creating a contact that gets used when reading the csv
     static Contact contacts;
 
+    // For reading content in the csv
     static String[] values;
 
+    // the number of nested phone columns (initialized to 0 at the start)
     static int numberOfNestedColumns = 0;
 
-    // Create a private TableView object called contactTable
-    private TableView contactTable = new TableView();
+    // Creating a private TableView object called contactTable
+    private TableView<Contact> contactTable = new TableView<>();
 
-    // Create a private TextField object called firstName
+    // Creating the TextField objects
     private TextField firstName = new TextField();
-
-    // Create a private TextField object called lastName
     private TextField lastName = new TextField();
-
-    // Create a private TextField object called companyName
     private TextField companyName = new TextField();
-
-    // Create a private TextField object called email
     private TextField email = new TextField();
-
-    // Create a private TextField object called number
     private TextField number = new TextField();
 
-    private TextField newNumber = new TextField();
+    // Creating the parent column for the phone numbers
+    TableColumn<Contact, String> parentColumn = new TableColumn<>("Phone Numbers");
 
     public static void main(String[] banana) {
         launch(banana);
@@ -101,91 +95,54 @@ public class Main extends Application {
         contactTable.getColumns().add(lastNameColumn);
         contactTable.getColumns().add(companyColumn);
         contactTable.getColumns().add(emailAddressColumn);
-        contactTable.getColumns().add(phoneNumberColumn);
+        contactTable.getColumns().add(parentColumn);
 
-        // relocate the table to coordinates (165, 85)
-        contactTable.relocate(165, 85);
+        // Adding the phone column to the nested parent column of phone numbers and
+        // incrememnting the number of nested columns
+        parentColumn.getColumns().add(phoneNumberColumn);
+        numberOfNestedColumns++;
 
-        // set the minimum width of the table to 470
+        // Relocating and setting table attributes
+        contactTable.relocate(165, 105);
         contactTable.setMinWidth(470);
 
-        // set a prompt text for the TextField fristName which says "First Name"
+        // firstName attributes and location
         firstName.setPromptText("First Name");
-
-        // add the TextField firstName to menuLayout
+        firstName.relocate(20, 20);
+        firstName.setMaxWidth(100);
         menuPane.getChildren().add(firstName);
 
-        // relocate firstName to coordinates (20, 20)
-        firstName.relocate(20, 20);
-
-        // set the maximum width of firstName to 100
-        firstName.setMaxWidth(100);
-
-        // set a prompt text for the TextField lastName which says "Last Name"
+        // lastName attributes and location
         lastName.setPromptText("Last Name");
-
-        // add the TextField lastName to menuLayout
+        lastName.relocate(130, 20);
+        lastName.setMaxWidth(100);
         menuPane.getChildren().add(lastName);
 
-        // relocate lastName (130, 20)
-        lastName.relocate(130, 20);
-
-        // set the maximum width of lastName to 100
-        lastName.setMaxWidth(100);
-
-        // set a prompt text for the TextField companyName which says "Company"
+        // companyName attributes and location
         companyName.setPromptText("Company");
-
-        // add the TextField companyName to menuLayout
+        companyName.relocate(240, 20);
+        companyName.setMaxWidth(120);
         menuPane.getChildren().add(companyName);
 
-        // relocate companyName to (240, 20)
-        companyName.relocate(240, 20);
-
-        // set the maximum width of companyName to 120
-        companyName.setMaxWidth(120);
-
-        // set a prompt text for the TextField email which says "Email Address"
+        // emailAddress attributes and location
         email.setPromptText("Email Address");
-
-        // add the TextField email to menuLayout
+        email.relocate(370, 20);
+        email.setMinWidth(200);
         menuPane.getChildren().add(email);
 
-        // relocate email to (370, 20)
-        email.relocate(370, 20);
-
-        // set the minimum width of email to be 200
-        email.setMinWidth(200);
-
-        // set a prompt text for the TextField number which says "Phone Number"
+        // phoneNumber attributes and location
         number.setPromptText("Phone Number");
-
-        // add the TextField number to menuLayout
+        number.relocate(580, 20);
+        number.setMaxWidth(100);
         menuPane.getChildren().add(number);
 
-        // relocate number to (580, 20)
-        number.relocate(580, 20);
-
-        // set the maximum width of number to 100
-        number.setMaxWidth(100);
-
-        menuPane.getChildren().add(newNumber);
-        newNumber.relocate(550, 550);
-        newNumber.setMaxWidth(100);
-
-        // create a Button called addButton for adding contacts
+        // The button for adding contacts
         Button addButton = new Button("Add");
-
-        // add the button to menuPane
+        addButton.relocate(690, 20);
+        addButton.setMinWidth(90);
         menuPane.getChildren().add(addButton);
 
-        // relocate it to (690, 20)
-        addButton.relocate(690, 20);
-
-        // set the minimum width of it to 90
-        addButton.setMinWidth(90);
-
-        // Create an event handler for when the button is pressed
+        // Button press Event Handler
         addButton.setOnAction(event -> {
 
             // Create a contact object with the values in the TextFields to be the values of
@@ -193,38 +150,30 @@ public class Main extends Application {
             Contact person = new Contact(firstName.getText(), lastName.getText(), companyName.getText(),
                     email.getText(), number.getText());
 
-            // TESTING: seems to work right now?????? no way
-            for (int i = 0; i < numberOfNestedColumns; i++) {
+            // Add the phone numbers to the list of that contact based on how many columns
+            // there are in the table
+            for (int i = 1; i < numberOfNestedColumns; i++) {
                 person.addPNumber(new SimpleStringProperty("-1"));
             }
 
-            // Call the addContact method that adds the contact to the table
+            // Call the addContact method that adds the contact to the table and validates a
+            // few fields
             addContact(person);
 
             // Call the clearFields method that clears the TextFields
             clearFields();
-
         });
 
-        // Create a button called delete for deleting contacts
+        // Delete button for deleting contacts
         Button deleteButton = new Button("Delete");
-
-        // Add it to menuPane
+        deleteButton.relocate(690, 60);
+        deleteButton.setMinWidth(90);
         menuPane.getChildren().add(deleteButton);
 
-        // Relocate it to (690, 60)
-        deleteButton.relocate(690, 60);
-
-        // Set the minimum width to 90
-        deleteButton.setMinWidth(90);
-
-        // Create an event handler for when the button is pressed
+        // Delete button press Event Handler
         deleteButton.setOnAction(event -> {
 
-            // Create an int variable called row to store the index value of the Contact
-            // being deleted
-            // int row = contactTable.getSelectionModel().getSelectedIndex();
-
+            // Getting the selection
             Contact deleteRow = (Contact) contactTable.getSelectionModel().getSelectedItem();
 
             // Remove the Contact with the index row
@@ -233,30 +182,58 @@ public class Main extends Application {
 
         });
 
+        // The button for adding a new phone number
         Button addPhoneNumber = new Button("Add Phone Number");
-        menuPane.getChildren().add(addPhoneNumber);
         addPhoneNumber.relocate(620, 550);
         addPhoneNumber.setMinWidth(90);
+        menuPane.getChildren().add(addPhoneNumber);
 
+        // Add Phone Number Event Handler
         addPhoneNumber.setOnAction(event -> {
 
+            // Incrementing the nested columns count
             numberOfNestedColumns++;
 
+            // Creating the nestedColumn
             TableColumn<Contact, String> nestedColumn = new TableColumn<>("Phone Number");
-            phoneNumberColumn.getColumns().add(nestedColumn);
 
+            // Iterating over the size of the rows in the table
             for (int i = 0; i < contactTable.getItems().size(); i++) {
+                // For each contact, add a phone number to their list with the value of -1
                 Contact c = (Contact) contactTable.getItems().get(i);
-
                 c.addPNumber(new SimpleStringProperty("-1"));
-
             }
 
+            // Setting the cell value factory to -1
             nestedColumn.setCellValueFactory(cellData -> {
                 return cellData.getValue().getPNumberAt(numberOfNestedColumns - 1);
             });
+            // cell factory is a phoneTableCell();
             nestedColumn.setCellFactory(list -> new PhoneTableCell());
-            nestedColumn.setEditable(true);
+            nestedColumn.setEditable(true); // Editable
+            parentColumn.getColumns().add(nestedColumn); // Adding to the parentColumn
+        });
+
+        // Button to be used to access instructions
+        Button instructions = new Button("Instructions");
+        menuPane.getChildren().add(instructions);
+        instructions.relocate(50, 550);
+
+        // Button press EVENT HANDLER
+        instructions.setOnAction(event -> {
+
+            // Create an alert
+            Alert instruct = new Alert(AlertType.INFORMATION);
+
+            // Set the header text to "Instructions"
+            instruct.setHeaderText("Instructions");
+
+            // Set the content of the alert to the instructions to be displayed
+            instruct.setContentText(
+                    "To create a new contact, fill in the text fields and press \"Add\" \n\nTo delete a contact, select it and press \"Delete\" \n\nYou can add more phone number columns by pressing \"Add Phone Number\" \n\nTo edit a property of a contact, double click on it \n\nPhone numbers must be 10 digit numbers, and email addresses must conform to rules of email addresses");
+
+            // Show the alert
+            instruct.show();
 
         });
 
@@ -276,14 +253,13 @@ public class Main extends Application {
                     // Enhanced for loop that repeats over the rows in the table
                     for (Object r : contactTable.getItems()) {
 
-                        //
+                        // The information from the contact
                         String firstName = ((Contact) r).fNameProperty().get();
                         String lastName = ((Contact) r).lNameProperty().get();
                         String company = ((Contact) r).cmpnyProperty().get();
                         String eAddress = ((Contact) r).eAddressProperty().get();
-                        String pNumber = ((Contact) r).pNumberProperty().get();
 
-                        System.out.println(firstName + "," + lastName + "," + company + "," + eAddress + "," + pNumber);
+                        // Writing the contact information to the file
                         writer.write(
                                 firstName + "," + lastName + "," + company + "," + eAddress + ",");
                         for (int i = 0; i < ((Contact) r).getPNumberList().size(); i++) {
@@ -329,14 +305,17 @@ public class Main extends Application {
                 // Adding the contact to be displayed in the GUI
                 contactTable.getItems().add(contacts);
 
+                // If there are multiple phone numbers, then we want to create the nestedColumns
+                // for them
                 if (values.length > 5 && firstTime) {
 
-                    for (int i = 0; i < contacts.getPNumberList().size(); i++) {
-                        preCreatePNumberCols(i);
+                    for (int i = 1; i < contacts.getPNumberList().size(); i++) {
+                        preCreatePNumberCols(i); // Creating the nested columns
                     }
                     firstTime = false;
                 }
             }
+            br.close();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -355,38 +334,57 @@ public class Main extends Application {
     }
 
     private void preCreatePNumberCols(int i) {
-        System.out.println("Print" + (i + 1));
+        // Creating and adding the nestedColumn to the parentColumn
         TableColumn<Contact, String> nestedColumn = new TableColumn<>("Phone Number");
-        ((TableColumn<Contact, String>) contactTable.getColumns().get(4)).getColumns().add(nestedColumn);
+        parentColumn.getColumns().add(nestedColumn);
         nestedColumn.setCellValueFactory(cellData -> {
             return cellData.getValue().getPNumberAt(i);
         });
         nestedColumn.setCellFactory(list -> new PhoneTableCell());
         nestedColumn.setEditable(true);
-        numberOfNestedColumns++;
+        // case for if there is only 1 number from the file
+        if (i > 0)
+            numberOfNestedColumns++; // Incrementing the number of nested columns
     }
 
     // A private void method called addContact with the parameter of type Contact
     // called person. Its function is to add person to the contactTable
-    private void addContact(Contact Person) {
+    private void addContact(Contact person) {
 
         // Regex from https://www.javatpoint.com/java-email-validation
         String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
         Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(Person.getEmailAddress());
+        Matcher matcher = pattern.matcher(person.getEmailAddress());
 
-        // Validation for when a contact is added, the phone number should be a valid
-        // phone number, and same with the email address
+        // Validation for when a contact is added, certain things should be met
+        // regarding the phone number, names, and email address
         Alert alert = new Alert(AlertType.INFORMATION);
         String contentText = "Invalid Field Entered";
         alert.setContentText(contentText);
-        if (Person.getPhoneNumber().length() != 10) {
+        if (person.getPhoneNumber().length() != 10) {
             alert.show();
         } else if (!matcher.matches()) {
             alert.show();
+        } else if (!(person.fNameProperty().getValue().length() == 0 || person.fNameProperty().getValue() == null
+                || person.lNameProperty().getValue().length() == 0 || person.lNameProperty().getValue() == null)) {
+            if (person.fNameProperty().getValue().charAt(0) == ' ') {
+                alert.show();
+            } else if (person.lNameProperty().getValue().charAt(0) == ' ') {
+                alert.show();
+            }
         } else {
+            boolean valid = true;
             // Add person to contactTable
-            contactTable.getItems().add(Person);
+            for (int i = 0; i < person.getPhoneNumber().length(); i++) {
+                if (person.getPhoneNumber().charAt(i) < 48 || person.getPhoneNumber().charAt(i) > 57) {
+                    alert.show();
+                    valid = false;
+                    break;
+                }
+            }
+            if (valid) {
+                contactTable.getItems().add(person);
+            }
         }
 
     }
@@ -394,20 +392,10 @@ public class Main extends Application {
     // A private void method called ClearFields that doesn't have any parameters.
     // Its function is to clear the TextFields
     private void clearFields() {
-
-        // Clear firstName
         firstName.clear();
-
-        // Clear lastName
         lastName.clear();
-
-        // Clear companyName
         companyName.clear();
-
-        // Clear email
         email.clear();
-
-        // Clear number
         number.clear();
 
     }
